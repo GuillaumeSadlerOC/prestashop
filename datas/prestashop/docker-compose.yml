@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+    mysql:
+        image: mysql:5
+        ports:
+            - "3306"
+        volumes:
+            - db-data:/var/lib/mysql
+            - /home/vagrant/datas/prestashop/volumes/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: prestashop
+            MYSQL_USER: prestashopuser
+            MYSQL_PASSWORD: +QAY2wsx3edc
+        restart: always
+    apache:
+        container_name: prestashop-git
+        image: prestashop/prestashop-git:7
+        environment:
+            PS_INSTALL_AUTO: 1
+            DB_NAME: prestashop
+            DB_USER: prestashopuser
+            DB_PASSWD: +QAY2wsx3edc
+            DB_SERVER: mysql
+            PS_DOMAIN: localhost:8001
+            PS_FOLDER_INSTALL: install-dev
+            PS_FOLDER_ADMIN: admin-dev
+        ports:
+            - "8001:80"
+        volumes:
+            - ./:/var/www/html/:delegated
+            - vendor:/var/www/html/vendor
+            - var:/var/www/html/var
+        restart: always
+
+volumes:
+    db-data:
+    vendor:
+    var:
